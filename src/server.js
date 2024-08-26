@@ -3,7 +3,8 @@ const cluster = require("cluster");
 const os = require("os");
 const { PORT } = require("../config/index")
 const taskRouter = require("./routes/taskRouter.js");
-
+const errorHandler = require('./middleware/errorHandler');
+const app = express();
 const numsCpus = os.cpus().length;
 
 if (cluster.isMaster) {
@@ -16,13 +17,9 @@ if (cluster.isMaster) {
     });
 
 } else {
-    const app = express();
     app.use(express.json());
-    app.use("/api/v1", (req,res)=>{
-        res.json({
-            message : "task executed successfully"
-        })
-    });
+    app.use("/api/v1", taskRouter);
+    app.use(errorHandler);
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}, with worker ${process.pid}`);
     });
@@ -31,3 +28,18 @@ if (cluster.isMaster) {
 
 
 
+
+
+// Catch unhandled promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    process.exit(1);
+});
+
+// Catch uncaught exceptions
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+    process.exit(1);
+});
+
+module.exports = app;

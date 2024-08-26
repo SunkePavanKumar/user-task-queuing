@@ -11,7 +11,7 @@ const rateLimiter = new RateLimiterRedis({
     points: RATE_LIMIT.POINTS, // 20 tasks per minute
     duration: RATE_LIMIT.DURATION, // Per 60 seconds
     execEvenly: true, // Distribute requests evenly
-    blockDuration: 1, // Block for 1 second if rate limit exceeded
+    blockDuration: 3, // Block for 3 second if rate limit exceeded
 });
 
 const rateLimiterMiddleware = (req, res, next) => {
