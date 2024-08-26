@@ -1,0 +1,13 @@
+version: '3.8'  # Specify the version of docker-compose
+
+services:
+  redis:
+    image: redis:latest  # Pull the latest Redis image
+    container_name: redis-server  # Name the container
+    ports:
+      - "6379:6379"  # Map Redis default port
+    volumes:
+      - redis_data:/data  # Persist Redis data
+
+volumes:
+  redis_data:
